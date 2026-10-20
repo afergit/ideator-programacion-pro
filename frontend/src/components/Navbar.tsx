@@ -41,17 +41,9 @@ export const Navbar: React.FC = () => {
           {user && (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2.5 pl-3 border-l border-slate-200">
-                {user.avatarUrl ? (
-                  <img
-                    src={user.avatarUrl}
-                    alt={user.name}
-                    className="w-8 h-8 rounded-full ring-2 ring-indigo-50 object-cover"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">
-                    <UserIcon className="w-4 h-4" />
-                  </div>
-                )}
+                <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs ring-2 ring-indigo-50">
+                  {user.name.trim().charAt(0).toUpperCase() || <UserIcon className="w-4 h-4" />}
+                </div>
                 <div className="hidden sm:flex flex-col text-left">
                   <span className="text-xs font-semibold text-slate-800 leading-tight">{user.name}</span>
                   <span className="text-[11px] text-slate-500 leading-tight">{user.email}</span>

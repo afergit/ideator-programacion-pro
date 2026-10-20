@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
@@ -11,10 +11,8 @@ export const App: React.FC = () => {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Ruta pública */}
           <Route path="/login" element={<Login />} />
 
-          {/* Rutas protegidas (SCRUM-26) */}
           <Route
             path="/dashboard"
             element={
@@ -32,7 +30,6 @@ export const App: React.FC = () => {
             }
           />
 
-          {/* Redirección por defecto */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
