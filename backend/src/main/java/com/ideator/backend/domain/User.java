@@ -1,4 +1,5 @@
 package com.ideator.backend.domain;
+// Modelo BD y Usuarios: Entidad User para la tabla de usuarios.
 
 import com.ideator.backend.domain.enums.Role;
 import jakarta.persistence.Column;

@@ -1,4 +1,5 @@
 package com.ideator.backend.domain;
+// Modelo BD y Usuarios: Entidad ProjectMember para la tabla relacional entre usuarios y proyectos.
 
 import com.ideator.backend.domain.enums.AccessLevel;
 import jakarta.persistence.Column;
@@ -23,7 +24,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "project_members", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_project_member", columnNames = {"project_id", "user_id"})
+        @UniqueConstraint(name = "uk_project_member", columnNames = { "project_id", "user_id" })
 })
 @Getter
 @Setter

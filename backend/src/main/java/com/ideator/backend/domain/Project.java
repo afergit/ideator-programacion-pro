@@ -1,4 +1,5 @@
 package com.ideator.backend.domain;
+// Modelo BD y Usuarios: Entidad Project para la tabla de proyectos.
 
 import com.ideator.backend.domain.enums.ProjectStatus;
 import jakarta.persistence.CascadeType;
