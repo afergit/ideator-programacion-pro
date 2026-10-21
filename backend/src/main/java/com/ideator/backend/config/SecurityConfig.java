@@ -1,6 +1,6 @@
 package com.ideator.backend.config;
-// SCRUM-25 Auth SSO & JWT: Configuración de Spring Security para login con Google y generación/validación de tokens JWT.
-// Epic: Épica 1
+//Auth SSO & JWT: Configuración de Spring Security para login con Google y generación/validación de tokens JWT.
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ideator.backend.dto.common.ApiError;
