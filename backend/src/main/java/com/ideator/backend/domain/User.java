@@ -1,6 +1,5 @@
 package com.ideator.backend.domain;
-// SCRUM-24 Modelo BD y Usuarios: Entidad User para la tabla de usuarios.
-// Epic: Épica 1
+// Modelo BD y Usuarios: Entidad User para la tabla de usuarios.
 
 import com.ideator.backend.domain.enums.Role;
 import jakarta.persistence.Column;

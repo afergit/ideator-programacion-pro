@@ -1,6 +1,5 @@
 package com.ideator.backend.domain;
-// SCRUM-24 Modelo BD y Usuarios: Entidad Project para la tabla de proyectos.
-// Epic: Épica 1
+// Modelo BD y Usuarios: Entidad Project para la tabla de proyectos.
 
 import com.ideator.backend.domain.enums.ProjectStatus;
 import jakarta.persistence.CascadeType;
