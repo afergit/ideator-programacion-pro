@@ -1,4 +1,5 @@
 package com.ideator.backend.service;
+//Integración con Azure AI Services: Servicio Spring Boot para conectar con APIs LLM en Azure.
 
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.models.ChatCompletions;
@@ -32,16 +33,14 @@ public class AzureAIService {
                     properties.deployment(),
                     null,
                     Instant.now(),
-                    null
-            );
+                    null);
         }
 
         long start = System.currentTimeMillis();
 
         try {
             ChatCompletionsOptions options = new ChatCompletionsOptions(
-                    List.of(new ChatRequestUserMessage("Responde únicamente con la palabra OK"))
-            )
+                    List.of(new ChatRequestUserMessage("Responde únicamente con la palabra OK")))
                     .setMaxTokens(8)
                     .setTemperature(0.0);
 
@@ -58,8 +57,7 @@ public class AzureAIService {
                     properties.deployment(),
                     latency,
                     Instant.now(),
-                    null
-            );
+                    null);
         } catch (Exception ex) {
             long latency = System.currentTimeMillis() - start;
             log.warn("Falló la comprobación de Azure OpenAI: {}", ex.getMessage());
@@ -70,8 +68,7 @@ public class AzureAIService {
                     properties.deployment(),
                     latency,
                     Instant.now(),
-                    ex.getMessage()
-            );
+                    ex.getMessage());
         }
     }
 

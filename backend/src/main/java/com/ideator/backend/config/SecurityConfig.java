@@ -1,4 +1,6 @@
 package com.ideator.backend.config;
+//Auth SSO & JWT: Configuración de Spring Security para login con Google y generación/validación de tokens JWT.
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ideator.backend.dto.common.ApiError;

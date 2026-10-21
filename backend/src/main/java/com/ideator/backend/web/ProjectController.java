@@ -1,4 +1,6 @@
 package com.ideator.backend.web;
+// SCRUM-27 CRUD de Proyectos: Endpoints REST y vistas básicas en React para crear y listar proyectos privados, validando acceso por token JWT.
+// Epic: Épica 1
 
 import com.ideator.backend.dto.project.ProjectRequest;
 import com.ideator.backend.dto.project.ProjectResponse;
