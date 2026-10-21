@@ -1,4 +1,6 @@
 package com.ideator.backend.domain;
+// SCRUM-24 Modelo BD y Usuarios: Entidad ProjectMember para la tabla relacional entre usuarios y proyectos.
+// Epic: Épica 1
 
 import com.ideator.backend.domain.enums.AccessLevel;
 import jakarta.persistence.Column;
