@@ -1,4 +1,6 @@
 package com.ideator.backend.service;
+// SCRUM-26 Integración con Azure AI Services: Servicio Spring Boot para conectar con APIs LLM en Azure.
+// Epic: Épica 1
 
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.models.ChatCompletions;
