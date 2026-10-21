@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ideator-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ideator_db
+      POSTGRES_USER: ideator_user
+      POSTGRES_PASSWORD: ideator_pass
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - ideator_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ideator_user -d ideator_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  ideator_pgdata:
+    name: ideator_pgdata
