@@ -14,4 +14,16 @@ public record AzureOpenAIProperties(
                 && StringUtils.hasText(apiKey)
                 && StringUtils.hasText(deployment);
     }
+
+    public String getDeploymentName() {
+        return deployment;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
 }

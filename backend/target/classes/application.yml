@@ -40,7 +40,9 @@ jwt:
   expiration-ms: ${JWT_EXPIRATION_MS:86400000}
 
 azure:
+  keyvault:
+    uri: ${AZURE_KEYVAULT_URI:https://kv-ideator-ac2500.vault.azure.net/}
   openai:
-    endpoint: ${AZURE_OPENAI_ENDPOINT:}
+    endpoint: ${AZURE_OPENAI_ENDPOINT:https://ideator-colque-resource.openai.azure.com/openai/v1}
     api-key: ${AZURE_OPENAI_KEY:}
-    deployment: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o-mini}
+    deployment: ${AZURE_OPENAI_DEPLOYMENT:gpt-4o}

@@ -1,4 +1,4 @@
-// SCRUM-29: Servicio para interactuar con Azure OpenAI y generar respuestas estructuradas en JSON.
+//Servicio para interactuar con Azure OpenAI y generar respuestas estructuradas en JSON.
 package com.ideator.backend.service;
 
 import com.azure.ai.openai.OpenAIClient;
@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * AzureAiChatService
@@ -52,22 +53,16 @@ public class AzureAiChatService {
      * @return {@link AiAnalysisResponse} parseado del JSON del modelo
      */
     public AiAnalysisResponse chat(String userMessage) {
-        // Build chat messages: system prompt + user message
-        ChatRequestSystemMessage systemMessage = new ChatRequestSystemMessage(SYSTEM_PROMPT);
-        ChatRequestUserMessage user = new ChatRequestUserMessage(userMessage);
-        ChatCompletionsOptions options = new ChatCompletionsOptions(
-                Collections.singletonList((ChatRequestMessage) systemMessage),
-                Collections.singletonList((ChatRequestMessage) user)
+        List<ChatRequestMessage> messages = List.of(
+                new ChatRequestSystemMessage(SYSTEM_PROMPT),
+                new ChatRequestUserMessage(userMessage)
         );
-        // Configure deployment name, temperature = 0 for deterministic output
-        options.setDeploymentName(properties.getDeploymentName());
-        options.setTemperature(0.0f);
+        ChatCompletionsOptions options = new ChatCompletionsOptions(messages);
+        options.setTemperature(0.0);
 
         try {
-            ChatCompletions completions = openAIClient.getChatCompletions(options);
+            ChatCompletions completions = openAIClient.getChatCompletions(properties.deployment(), options);
             String json = completions.getChoices().get(0).getMessage().getContent();
-            // Simple parsing – in production use a robust JSON mapper (e.g., Jackson)
-            // For this example we rely on Spring's ObjectMapper (already on classpath)
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
             return mapper.readValue(json, AiAnalysisResponse.class);
         } catch (Exception e) {

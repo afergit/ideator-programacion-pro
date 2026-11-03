@@ -1,5 +1,5 @@
 // SCRUM-28: Componente de interfaz de usuario para el dialogo iterativo entre el usuario y la IA.
-import React, { useState, useEffect, FormEvent } from "react";
+import React, { useState, FormEvent } from "react";
 import axios from "axios";
 
 interface Message {
