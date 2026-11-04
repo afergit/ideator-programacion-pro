@@ -1,4 +1,5 @@
-package com.ideator.integration;
+// SCRUM-37: LegisApp Benchmark Test - corrección de paquete e integración.
+package com.ideator.backend.service;
 
 import com.ideator.backend.service.MarkdownGeneratorService;
 import org.junit.jupiter.api.Assertions;
@@ -7,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
- * SCRUM-74 – LegisAppBenchmarkTest
+ * SCRUM-37 – LegisAppBenchmarkTest
  *
  * Prueba de integración que verifica que el {@link MarkdownGeneratorService}
  * es capaz de compilar toda la especificación del proyecto (fases A‑E) sin
