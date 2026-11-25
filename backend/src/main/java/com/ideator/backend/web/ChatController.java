@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/projects/{projectId}/chat")
@@ -21,14 +23,31 @@ public class ChatController {
     private final ProjectService projectService;
     private final ChatMessageRepository chatMessageRepository;
 
+    private Long parseProjectId(String projectId) {
+        try {
+            return Long.parseLong(projectId);
+        } catch (NumberFormatException e) {
+            return (long) Math.abs(projectId.hashCode());
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<java.util.List<ChatMessage>> getChatHistory(@PathVariable String projectId) {
+        Long numericId = parseProjectId(projectId);
+        java.util.List<ChatMessage> history = chatMessageRepository.findByProjectIdOrderByCreatedAtAsc(numericId);
+        return ResponseEntity.ok(history);
+    }
+
     @PostMapping
     public ResponseEntity<AiAnalysisResponse> chat(
-            @PathVariable Long projectId,
+            @PathVariable String projectId,
             @RequestBody ChatRequestDto request) {
+
+        Long numericId = parseProjectId(projectId);
 
         // Guardar mensaje del usuario
         ChatMessage userMsg = new ChatMessage();
-        userMsg.setProjectId(projectId);
+        userMsg.setProjectId(numericId);
         userMsg.setSender(Sender.USER);
         userMsg.setContent(request.getContent());
         userMsg.setStatus("ENVIADO");
@@ -38,7 +57,7 @@ public class ChatController {
 
         // Guardar respuesta de IA
         ChatMessage aiMsg = new ChatMessage();
-        aiMsg.setProjectId(projectId);
+        aiMsg.setProjectId(numericId);
         aiMsg.setSender(Sender.AI);
         aiMsg.setContent(response.getRespuestaAlUsuario());
         aiMsg.setStatus(response.getEstado());
@@ -46,9 +65,18 @@ public class ChatController {
 
         // Si el modelo indica bloqueo, actualizar estado del proyecto
         if ("BLOQUEO".equalsIgnoreCase(response.getEstado())) {
-            projectService.updateProjectStatus(projectId, "PAUSED_PENDING_INFO");
+            try {
+                UUID uuid = UUID.fromString(projectId);
+                projectService.updateProjectStatus(uuid, "PAUSED_PENDING_INFO");
+            } catch (Exception ignored) {
+                projectService.updateProjectStatus(numericId, "PAUSED_PENDING_INFO");
+            }
         }
 
         return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<AiAnalysisResponse> chat(Long projectId, ChatRequestDto request) {
+        return chat(String.valueOf(projectId), request);
     }
 }

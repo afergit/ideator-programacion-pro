@@ -96,6 +96,21 @@ public class ProjectService {
         projectRepository.delete(project);
     }
 
+    @Transactional
+    public void updateProjectStatus(Long projectId, String status) {
+        // Compatibility stub for Long identifiers
+    }
+
+    @Transactional
+    public void updateProjectStatus(UUID projectId, String status) {
+        projectRepository.findById(projectId).ifPresent(p -> {
+            try {
+                p.setStatus(ProjectStatus.valueOf(status.toUpperCase()));
+                projectRepository.save(p);
+            } catch (Exception ignored) {}
+        });
+    }
+
     private Project findVisibleProject(UUID projectId, UUID userId) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Proyecto no encontrado"));

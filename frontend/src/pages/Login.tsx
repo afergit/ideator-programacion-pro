@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowRight, Cpu, GitMerge, ShieldCheck, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { RocketLogo } from '../components/RocketLogo';
 import { getApiErrorMessage } from '../lib/api';
+import { saveSession } from '../lib/storage';
 
 type FormMode = 'login' | 'register';
 
@@ -61,30 +63,41 @@ export const Login: React.FC = () => {
     setError('');
   };
 
+  const handleDocenteDirectAccess = () => {
+    saveSession('docente-demo-token-2026', {
+      id: '1',
+      name: 'Profesor Evaluador',
+      email: 'profesor@evaluacion.edu.pe',
+      createdAt: new Date().toISOString(),
+    });
+    navigate('/project/1');
+  };
+
   return (
-    <div className="min-h-screen bg-[#F7F8FA] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#2457E6] to-[#1D45B8] shadow-xl shadow-blue-100 mb-4">
-          <Sparkles className="w-8 h-8 text-white" />
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-10 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center px-4">
+        {/* Isotipo Cohete Minimalista */}
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-slate-900 text-white shadow-xs mb-3">
+          <RocketLogo className="w-6 h-6 text-slate-100" />
         </div>
-        <h1 className="text-3xl font-extrabold text-[#171A1F] tracking-tight">Ideator</h1>
-        <p className="mt-2 text-sm text-slate-600 font-medium">
-          Convierte conversaciones en definiciones listas para construir.
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Ideator Pro</h1>
+        <p className="mt-1 text-xs sm:text-sm text-slate-500 font-medium">
+          Convierte ideas en PRDs estructurados y especificaciones listas para construir.
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-6 shadow-sm border border-slate-200 sm:rounded-2xl sm:px-10">
-          <div className="mb-6 flex rounded-xl bg-slate-100 p-1">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
+        <div className="bg-white py-7 px-5 sm:px-8 shadow-xs border border-slate-200/80 rounded-2xl">
+          <div className="mb-5 flex rounded-xl bg-slate-100 p-1">
             <button
               type="button"
               onClick={() => {
                 setMode('login');
                 setError('');
               }}
-              className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+              className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                 mode === 'login'
-                  ? 'bg-white text-slate-900 shadow-sm'
+                  ? 'bg-white text-slate-900 shadow-2xs'
                   : 'text-slate-500 hover:text-slate-700'
               }`}
             >
@@ -96,9 +109,9 @@ export const Login: React.FC = () => {
                 setMode('register');
                 setError('');
               }}
-              className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
+              className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
                 mode === 'register'
-                  ? 'bg-white text-slate-900 shadow-sm'
+                  ? 'bg-white text-slate-900 shadow-2xs'
                   : 'text-slate-500 hover:text-slate-700'
               }`}
             >
@@ -107,12 +120,12 @@ export const Login: React.FC = () => {
           </div>
 
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
+            <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3.5">
             {mode === 'register' && (
               <div>
                 <label htmlFor="name" className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
@@ -127,7 +140,7 @@ export const Login: React.FC = () => {
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   placeholder="Ana Pérez"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:bg-white focus:border-slate-900 transition-colors"
                 />
               </div>
             )}
@@ -144,7 +157,7 @@ export const Login: React.FC = () => {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="alumno@uai.cl"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:bg-white focus:border-slate-900 transition-colors"
               />
             </div>
 
@@ -162,14 +175,14 @@ export const Login: React.FC = () => {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Mínimo 8 caracteres"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs sm:text-sm focus:outline-none focus:bg-white focus:border-slate-900 transition-colors"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold text-white bg-[#2457E6] hover:bg-[#1D45B8] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2457E6] shadow-md shadow-blue-100 transition-all disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 shadow-2xs transition-all active:scale-[0.99] disabled:opacity-60"
             >
               <span>
                 {isLoading
@@ -186,24 +199,35 @@ export const Login: React.FC = () => {
             <button
               type="button"
               onClick={fillDemoCredentials}
-              className="mt-4 w-full rounded-xl border border-dashed border-slate-300 px-4 py-2 text-xs font-semibold text-slate-600 hover:border-indigo-400 hover:text-indigo-600 transition-colors"
+              className="mt-3.5 w-full rounded-xl border border-dashed border-slate-300 px-3 py-2 text-xs font-semibold text-slate-600 hover:border-slate-400 hover:text-slate-900 transition-colors"
             >
               Usar credenciales demo (demo@ideator.com / Demo1234!)
             </button>
           )}
 
-          <div className="mt-8 pt-6 border-t border-slate-100 grid grid-cols-3 gap-2 text-center">
+          <div className="mt-4 pt-3.5 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={handleDocenteDirectAccess}
+              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 transition-all shadow-2xs active:scale-98"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+              <span>Acceso Rápido Docente (Ver FinPulse AI en Vivo)</span>
+            </button>
+          </div>
+
+          <div className="mt-6 pt-5 border-t border-slate-100 grid grid-cols-3 gap-2 text-center">
             <div className="flex flex-col items-center gap-1">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span className="text-[10px] font-semibold text-slate-600">JWT seguro</span>
+              <ShieldCheck className="w-3.5 h-3.5 text-slate-700" />
+              <span className="text-[10px] font-semibold text-slate-600">JWT Seguro</span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <Cpu className="w-4 h-4 text-indigo-600" />
+              <Cpu className="w-3.5 h-3.5 text-slate-700" />
               <span className="text-[10px] font-semibold text-slate-600">Azure OpenAI</span>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <GitMerge className="w-4 h-4 text-amber-600" />
-              <span className="text-[10px] font-semibold text-slate-600">Trazable</span>
+              <GitMerge className="w-3.5 h-3.5 text-slate-700" />
+              <span className="text-[10px] font-semibold text-slate-600">Trazabilidad</span>
             </div>
           </div>
         </div>

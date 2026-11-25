@@ -1,0 +1,47 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:ideator_test;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    open-in-view: false
+  h2:
+    console:
+      enabled: false
+
+server:
+  port: 0
+
+app:
+  cors:
+    allowed-origins: http://localhost:3000
+  seed:
+    enabled: true
+
+jwt:
+  secret: test-secret-key-for-unit-tests-only-0123456789
+  expiration-ms: 3600000
+
+azure:
+  keyvault:
+    uri: ""
+  openai:
+    endpoint: https://test.openai.azure.com
+    api-key: test-api-key-not-real
+    deployment: test-deployment
+  foundry:
+    project-endpoint: https://ideator-colque-resource.services.ai.azure.com/api/projects/acolque-4355
+    api-version: 2025-05-15-preview
+    agents:
+      context: ideator-context-agent
+      db: ideator-db-agent
+      api: ideator-api-agent
+      ui: ideator-ui-agent
+      security: ideator-sec-agent
+      qa: ideator-qa-agent
+      architecture: ideator-arch-agent
+      finops: ideator-finops-agent

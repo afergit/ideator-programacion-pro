@@ -1,78 +1,48 @@
-// SCRUM-29: Servicio para interactuar con Azure OpenAI y generar respuestas estructuradas en JSON.
+// Servicio para interactuar con Azure AI Foundry (ideator-context-agent) y generar respuestas estructuradas en JSON.
 package com.ideator.backend.service;
 
-import com.azure.ai.openai.OpenAIClient;
-import com.azure.ai.openai.models.ChatCompletions;
-import com.azure.ai.openai.models.ChatCompletionsOptions;
-import com.azure.ai.openai.models.ChatRequestMessage;
-import com.azure.ai.openai.models.ChatRequestSystemMessage;
-import com.azure.ai.openai.models.ChatRequestUserMessage;
-import com.ideator.backend.config.AzureOpenAIProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ideator.backend.dto.AiAnalysisResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 
 /**
  * AzureAiChatService
  *
- * Este servicio encapsula la lógica de llamada a Azure OpenAI con un System Prompt
- * estricto que fuerza al modelo a devolver siempre un JSON con la siguiente
- * estructura:
+ * Consume el agente especializado ideator-context-agent (fase CONTEXT) a través de
+ * {@link FoundryAgentOrchestratorService}. El agente en Microsoft Foundry contiene
+ * las instrucciones y reglas del sistema para responder con el JSON estructurado:
  * {
  *   "analisisInterno": "...",
  *   "estado": "PREGUNTANDO | BLOQUEO | LISTO_FASE_B",
  *   "respuestaAlUsuario": "...",
  *   "preguntasBloqueantes": ["...", "..."]
  * }
- *
- * Además, implementa la regla de “bloqueo” que obliga al modelo a responder
- * con estado "BLOQUEO" cuando faltan datos críticos.
  */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AzureAiChatService {
 
-    private final OpenAIClient openAIClient;
-    private final AzureOpenAIProperties properties;
-
-    private static final String SYSTEM_PROMPT = "You are a strict system that must never hallucinate. " +
-            "If any required information (problem, target client, MVP scope) is missing, respond with " +
-            "estado = \"BLOQUEO\" and list the missing questions in preguntasBloqueantes. " +
-            "Otherwise respond with estado = \"LISTO_FASE_B\" or \"PREGUNTANDO\" as appropriate. " +
-            "Response must be a single JSON object with fields: analisisInterno, estado, respuestaAlUsuario, preguntasBloqueantes.";
+    private final FoundryAgentOrchestratorService orchestratorService;
+    private final ObjectMapper objectMapper;
 
     /**
-     * Envía el mensaje del usuario al modelo y devuelve la respuesta estructurada.
+     * Envía el mensaje del usuario al agente de contexto de Foundry y devuelve la respuesta estructurada.
      *
      * @param userMessage mensaje del usuario
-     * @return {@link AiAnalysisResponse} parseado del JSON del modelo
+     * @return {@link AiAnalysisResponse} parseado del JSON devuelto por el agente
      */
     public AiAnalysisResponse chat(String userMessage) {
-        // Build chat messages: system prompt + user message
-        ChatRequestSystemMessage systemMessage = new ChatRequestSystemMessage(SYSTEM_PROMPT);
-        ChatRequestUserMessage user = new ChatRequestUserMessage(userMessage);
-        ChatCompletionsOptions options = new ChatCompletionsOptions(
-                Collections.singletonList((ChatRequestMessage) systemMessage),
-                Collections.singletonList((ChatRequestMessage) user)
-        );
-        // Configure deployment name, temperature = 0 for deterministic output
-        options.setDeploymentName(properties.getDeploymentName());
-        options.setTemperature(0.0f);
-
         try {
-            ChatCompletions completions = openAIClient.getChatCompletions(options);
-            String json = completions.getChoices().get(0).getMessage().getContent();
-            // Simple parsing – in production use a robust JSON mapper (e.g., Jackson)
-            // For this example we rely on Spring's ObjectMapper (already on classpath)
-            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-            return mapper.readValue(json, AiAnalysisResponse.class);
+            String rawResponse = orchestratorService.callAgent(AgentPhase.CONTEXT, userMessage);
+            return parseResponse(rawResponse);
         } catch (Exception e) {
-            log.error("Error calling Azure OpenAI", e);
-            // Return a fallback bloqueo response
+            log.error("Error al invocar ideator-context-agent en Foundry", e);
             AiAnalysisResponse fallback = new AiAnalysisResponse();
             fallback.setAnalisisInterno("Error interno al contactar el modelo.");
             fallback.setEstado("BLOQUEO");
@@ -80,5 +50,40 @@ public class AzureAiChatService {
             fallback.setPreguntasBloqueantes(Collections.emptyList());
             return fallback;
         }
+    }
+
+    private AiAnalysisResponse parseResponse(String rawResponse) {
+        if (!StringUtils.hasText(rawResponse)) {
+            throw new IllegalArgumentException("Respuesta vacía del agente");
+        }
+        try {
+            return objectMapper.readValue(rawResponse, AiAnalysisResponse.class);
+        } catch (Exception e) {
+            String cleaned = cleanJsonMarkdown(rawResponse);
+            try {
+                return objectMapper.readValue(cleaned, AiAnalysisResponse.class);
+            } catch (Exception ex) {
+                log.warn("La respuesta del agente no es JSON estricto, envolviendo en AiAnalysisResponse: {}", rawResponse);
+                AiAnalysisResponse resp = new AiAnalysisResponse();
+                resp.setAnalisisInterno(rawResponse);
+                resp.setEstado("PREGUNTANDO");
+                resp.setRespuestaAlUsuario(rawResponse);
+                resp.setPreguntasBloqueantes(Collections.emptyList());
+                return resp;
+            }
+        }
+    }
+
+    private String cleanJsonMarkdown(String raw) {
+        String cleaned = raw.trim();
+        if (cleaned.startsWith("```json")) {
+            cleaned = cleaned.substring(7);
+        } else if (cleaned.startsWith("```")) {
+            cleaned = cleaned.substring(3);
+        }
+        if (cleaned.endsWith("```")) {
+            cleaned = cleaned.substring(0, cleaned.length() - 3);
+        }
+        return cleaned.trim();
     }
 }

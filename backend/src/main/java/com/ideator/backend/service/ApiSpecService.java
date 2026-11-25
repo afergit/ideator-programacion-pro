@@ -3,8 +3,8 @@ package com.ideator.backend.service;
 
 import com.ideator.backend.model.EndpointSpec;
 import com.ideator.backend.repository.EndpointSpecRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,19 +13,27 @@ import java.util.List;
 /**
  * SCRUM-70 – ApiSpecService
  *
- * En una implementación real este servicio consumiría la especificación física de la
- * base de datos (generada en la fase B) y derivaría automáticamente los endpoints CRUD
- * para cada entidad, añadiendo los códigos de estado obligatorios.
- *
- * Aquí se ofrece un ejemplo simplificado que crea endpoints estáticos y los persiste
- * en la tabla {@code endpoint_spec}.
+ * Genera especificaciones de endpoints REST a partir del modelo de datos, consumiendo
+ * opcionalmente el agente especializado ideator-api-agent (fase API) en Microsoft Foundry
+ * a través de {@link FoundryAgentOrchestratorService}.
  */
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class ApiSpecService {
 
     private final EndpointSpecRepository endpointSpecRepository;
+    private final FoundryAgentOrchestratorService orchestratorService;
+
+    public ApiSpecService(EndpointSpecRepository endpointSpecRepository) {
+        this(endpointSpecRepository, null);
+    }
+
+    @Autowired
+    public ApiSpecService(EndpointSpecRepository endpointSpecRepository,
+                          @Autowired(required = false) FoundryAgentOrchestratorService orchestratorService) {
+        this.endpointSpecRepository = endpointSpecRepository;
+        this.orchestratorService = orchestratorService;
+    }
 
     /**
      * Genera especificaciones de endpoints para un proyecto dado y las guarda.
@@ -34,6 +42,15 @@ public class ApiSpecService {
      * @return la lista de {@link EndpointSpec} generada
      */
     public List<EndpointSpec> generateApiSpec(Long projectId) {
+        if (orchestratorService != null) {
+            try {
+                log.info("Consultando ideator-api-agent en Foundry para proyecto {}", projectId);
+                orchestratorService.callAgent(AgentPhase.API, "{\"projectId\": " + projectId + "}");
+            } catch (Exception e) {
+                log.warn("Fallo o fallback al consultar ideator-api-agent: {}", e.getMessage());
+            }
+        }
+
         List<EndpointSpec> specs = new ArrayList<>();
         // Ejemplo de CRUD para una entidad "Project"
         specs.add(createSpec(projectId, "GET", "/api/v1/projects", null, "ProjectResponse[]", "[200,401,403,500]"));

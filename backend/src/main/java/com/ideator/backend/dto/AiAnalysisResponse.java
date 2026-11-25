@@ -20,6 +20,15 @@ public class AiAnalysisResponse {
     private String respuestaAlUsuario;
     private List<String> preguntasBloqueantes;
 
+    public AiAnalysisResponse() {}
+
+    public AiAnalysisResponse(String analisisInterno, String estado, String respuestaAlUsuario, List<String> preguntasBloqueantes) {
+        this.analisisInterno = analisisInterno;
+        this.estado = estado;
+        this.respuestaAlUsuario = respuestaAlUsuario;
+        this.preguntasBloqueantes = preguntasBloqueantes;
+    }
+
     // Getters y Setters
     public String getAnalisisInterno() { return analisisInterno; }
     public void setAnalisisInterno(String analisisInterno) { this.analisisInterno = analisisInterno; }
@@ -29,4 +38,10 @@ public class AiAnalysisResponse {
     public void setRespuestaAlUsuario(String respuestaAlUsuario) { this.respuestaAlUsuario = respuestaAlUsuario; }
     public List<String> getPreguntasBloqueantes() { return preguntasBloqueantes; }
     public void setPreguntasBloqueantes(List<String> preguntasBloqueantes) { this.preguntasBloqueantes = preguntasBloqueantes; }
+
+    // Record-style accessors
+    public String analisisInterno() { return analisisInterno; }
+    public String estado() { return estado; }
+    public String respuestaAlUsuario() { return respuestaAlUsuario; }
+    public List<String> preguntasBloqueantes() { return preguntasBloqueantes; }
 }
