@@ -3,9 +3,9 @@ spring:
     name: ideator-api
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:${POSTGRES_PORT:5434}/ideator_db}
-    username: ${SPRING_DATASOURCE_USERNAME:ideator_user}
-    password: ${SPRING_DATASOURCE_PASSWORD:ideator_pass}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://aws-1-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres.gqujobuaprernpvxagro}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
     hikari:
       maximum-pool-size: 10
       connection-timeout: 30000

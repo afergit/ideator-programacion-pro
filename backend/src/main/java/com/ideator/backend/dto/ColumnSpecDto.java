@@ -19,4 +19,24 @@ public class ColumnSpecDto {
     private boolean nullable;
     private boolean primaryKey;
     private String foreignKey;
+
+    public boolean isPrimaryKey() {
+        return primaryKey;
+    }
+
+    public boolean getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(boolean primaryKey) {
+        this.primaryKey = primaryKey;
+    }
+
+    public boolean isNullable() {
+        return nullable;
+    }
+
+    public void setNullable(boolean nullable) {
+        this.nullable = nullable;
+    }
 }

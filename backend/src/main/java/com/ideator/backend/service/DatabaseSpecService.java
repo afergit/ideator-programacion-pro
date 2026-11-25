@@ -168,7 +168,7 @@ public class DatabaseSpecService {
                 for (ColumnSpecDto c : t.getColumns()) {
                     String type = c.getType() != null ? c.getType().trim().split("[\\s(]")[0].toLowerCase() : "string";
                     String name = c.getName() != null ? c.getName().trim().replaceAll("[^a-zA-Z0-9_]", "_") : "col";
-                    String tag = Boolean.TRUE.equals(c.getPrimaryKey()) ? " PK" : (c.getForeignKey() != null ? " FK" : "");
+                    String tag = c.isPrimaryKey() ? " PK" : (c.getForeignKey() != null ? " FK" : "");
                     sb.append(String.format("        %s %s%s\n", type, name, tag));
                 }
             }
